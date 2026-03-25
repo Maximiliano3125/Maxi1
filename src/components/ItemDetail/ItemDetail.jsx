@@ -23,10 +23,14 @@ function ItemDetail({ producto }) {
       margin: "20px"
     }}>
       <h2>{producto.nombre}</h2>
+        <img
+        src={producto.img}
+        alt={producto.nombre}
+        style={{ width: "300px", marginBottom: "10px" }}
+        />
       <p>{producto.descripcion}</p>
       <p>Precio: ${producto.precio}</p>
 
-      {/* 🔥 NUEVO */}
       <p>
         {stockDisponible > 0
           ? `Quedan ${stockDisponible} unidades`
