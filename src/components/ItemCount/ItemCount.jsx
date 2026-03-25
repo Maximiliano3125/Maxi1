@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 function ItemCount({ initial = 1, stock = 10, onAdd }) {
-  const [count, setCount] = useState(initial)
+  const [count, setCount] = useState(initial > stock ? stock:initial)
 
   const incrementar = () => {
     if (count < stock) setCount(count + 1)
@@ -11,11 +11,15 @@ function ItemCount({ initial = 1, stock = 10, onAdd }) {
     if (count > 1) setCount(count - 1)
   }
 
+  if(stock === 0){
+    return <p>Sin stock</p>
+  }
+
   return (
     <div>
-      <button onClick={decrementar}>-</button>
+      <button onClick={decrementar} disabled={count === 1} style={{ padding: "5px" }}>-</button>
       <span>{count}</span>
-      <button onClick={incrementar}>+</button>
+      <button onClick={incrementar} disabled={count === stock} style={{ padding: "5px" }}>+</button>
 
       <div>
         <button onClick={() => onAdd(count)}>

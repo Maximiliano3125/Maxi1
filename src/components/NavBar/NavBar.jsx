@@ -3,17 +3,23 @@ import CartWidget from '../CartWidget/CartWidget'
 
 function NavBar() {
   return (
-    <nav>
-      <h2>Mi Tienda</h2>
+    <nav style={{
+      display: "flex",
+      justifyContent: "space-between",
+      padding: "10px",
+      background: "#222",
+      color: "white"
+    }}>
+      <div style={{ display: "flex", gap: "15px" }}>
+        <Link to="/" style={{ color: "white" }}>Inicio</Link>
+        <Link to="/category/electronica" style={{ color: "white" }}>Electrónica</Link>
+        <Link to="/category/ropa" style={{ color: "white" }}>Ropa</Link>
+        <Link to="/category/hogar" style={{ color: "white" }}>Hogar</Link>
+      </div>
 
-      <ul>
-        <li><Link to="/">Inicio</Link></li>
-        <li><Link to="/category/electronica">Electrónica</Link></li>
-        <li><Link to="/category/ropa">Ropa</Link></li>
-        <li><Link to="/category/hogar">Hogar</Link></li>
-      </ul>
-
-      <CartWidget />
+      <Link to="/cart" style={{ color: "white" }}>
+        <CartWidget />
+      </Link>
     </nav>
   )
 }

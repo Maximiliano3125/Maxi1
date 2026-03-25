@@ -1,43 +1,40 @@
 import { useEffect, useState } from "react"
+import { collection, getDocs, query, where } from "firebase/firestore"
 import { useParams } from "react-router-dom"
+import { db } from "../../firebase/config"
 import ItemList from "../ItemList/ItemList"
 
-const productosMock = [
-  { id: 1, nombre: "TV", categoria: "electronica" },
-  { id: 2, nombre: "Notebook", categoria: "electronica" },
-  { id: 3, nombre: "Remera", categoria: "ropa" },
-  { id: 4, nombre: "Silla", categoria: "hogar" },
-]
-
-function ItemListContainer({ greeting }) {
+function ItemListContainer() {
 
   const [productos, setProductos] = useState([])
+  const [loading, setLoading] = useState(true)
+
   const { categoryId } = useParams()
 
   useEffect(() => {
 
-    const obtenerProductos = new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(productosMock)
-      }, 500)
-    })
+    const productosRef = collection(db, "productos")
 
-    obtenerProductos.then((res) => {
-      if (categoryId) {
-        setProductos(res.filter(prod => prod.categoria === categoryId))
-      } else {
-        setProductos(res)
-      }
-    })
+    const consulta = categoryId
+      ? query(productosRef, where("categoria", "==", categoryId))
+      : productosRef
+
+    getDocs(consulta)
+      .then((res) => {
+        const lista = res.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        setProductos(lista)
+      })
+      .catch(error => console.log(error))
+      .finally(() => setLoading(false))
 
   }, [categoryId])
 
-  return (
-  <div>
-    <h1>{greeting}</h1>
-    <ItemList productos={productos} />
-  </div>
-  )
+  if (loading) return <h2>Cargando productos...</h2>
+
+  return <ItemList productos={productos} />
 }
 
 export default ItemListContainer

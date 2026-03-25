@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "../../firebase/config"
 import ItemDetail from "../ItemDetail/ItemDetail"
-
-const productosMock = [
-  { id: 1, nombre: "TV", categoria: "electronica", descripcion: "Smart TV 50 pulgadas" },
-  { id: 2, nombre: "Notebook", categoria: "electronica", descripcion: "Notebook 16GB RAM" },
-  { id: 3, nombre: "Remera", categoria: "ropa", descripcion: "Remera algodón" },
-  { id: 4, nombre: "Silla", categoria: "hogar", descripcion: "Silla ergonómica" },
-]
 
 function ItemDetailContainer() {
 
@@ -16,23 +11,27 @@ function ItemDetailContainer() {
 
   useEffect(() => {
 
-    const obtenerProducto = new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(productosMock.find(prod => prod.id === Number(itemId)))
-      }, 500)
-    })
+    const productoRef = doc(db, "productos", itemId)
 
-    obtenerProducto.then(res => setProducto(res))
+    getDoc(productoRef)
+      .then((res) => {
+        if (res.exists()) {
+          setProducto({ id: res.id, ...res.data() })
+        } else {
+          console.log("No existe el producto")
+        }
+      })
+      .catch(error => console.log(error))
 
   }, [itemId])
 
   if (!producto) {
-   return <h2>Cargando...</h2>
-   }
+    return <h2>Cargando...</h2>
+  }
 
-   return (
+  return (
     <ItemDetail producto={producto} />
-   )
+  )
 }
 
 export default ItemDetailContainer
